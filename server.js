@@ -4,7 +4,7 @@ const graphql = require("graphql");
 const { graphqlHTTP } = require("express-graphql");
 const { Client } = require("pg");
 
-const config = require("./config")[process.env.NODE_ENV || "development"];
+const config = require("./config/config")[process.env.NODE_ENV || "development"];
 
 const client = new Client ({
 	host: config.database.host,
