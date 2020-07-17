@@ -1,4 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS parity_dev;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE parity_dev.parity_games (
 	id UUID DEFAULT uuid_generate_v4(),
