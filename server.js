@@ -120,7 +120,7 @@ const MutationRoot = new graphql.GraphQLObjectType({
 });
 
 
-const schema = new graphql.GraphQLSchema({ query: QueryRoot });
+const schema = new graphql.GraphQLSchema({ query: QueryRoot, mutation: MutationRoot });
 
 const app = express();
 app.use('/api', graphqlHTTP({
