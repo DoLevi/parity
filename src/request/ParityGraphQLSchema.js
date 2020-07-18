@@ -59,6 +59,18 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				}
 			}
 		},
+		removePosition: {
+			type: Position,
+			args: {
+				id: { type: graphql.GraphQLNonNull(graphql.GraphQLID) }
+			},
+			resolve: async (parent, args, context, resolveInfo) => {
+				const promise = databaseClient.deletePosition(args.id);
+				if (promise) {
+					return (await promise).rows[0];
+				}
+			}
+		},
 		addEdge: {
 			type: Edge,
 			args: {
@@ -79,6 +91,18 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				}
 			}
 		},
+		removeEdge: {
+			type: Edge,
+			args: {
+				id: { type: graphql.GraphQLNonNull(graphql.GraphQLID) }
+			},
+			resolve: async (parent, args, context, resolveInfo) => {
+				const promise = databaseClient.deleteEdge(args.id);
+				if (promise) {
+					return (await promise).rows[0];
+				}
+			}
+		},
 		addParityGame: {
 			type: ParityGame,
 			args: {
@@ -86,7 +110,7 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				description: { type: graphql.GraphQLNonNull(graphql.GraphQLString) }
 			},
 			resolve: async (parent, args, context, resolveInfo) => {
-                const promise =  databaseClient.createParityGame(
+                const promise = databaseClient.createParityGame(
 					args.name,
 					args.description
 				);
@@ -95,6 +119,18 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				}
 			}
 		},
+		removeParityGame: {
+			type: ParityGame,
+			args: {
+				id: { type: graphql.GraphQLNonNull(graphql.GraphQLID) }
+			},
+			resolve: async (parent, args, context, resolveInfo) => {
+				const promise = databaseClient.deleteParityGame(args.id);
+				if (promise) {
+					return (await promise).rows[0];
+				}
+			}
+		}
 	})
 });
 

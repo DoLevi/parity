@@ -1,9 +1,12 @@
 const { Client } = require("pg");
 
 
-const createPositionQuery = "INSERT INTO positions (name, fk_parity_game, intial, player_0, parity) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+const createPositionQuery = "INSERT INTO positions (name, fk_parity_game, initial, player_0, parity) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+const deletePositionQuery = "DELETE FROM positions WHERE id = $1 RETURNING *";
 const createEdgeQuery = "INSERT INTO edges (name, fk_parity_game, fk_source, fk_target) VALUES ($1, $2, $3, $4) RETURNING *";
+const deleteEdgeQuery = "DELETE FROM edges WHERE id = $1 RETURNING *";
 const createParityGameQuery = "INSERT INTO parity_games (name, description) VALUES ($1, $2) RETURNING *";
+const deleteParityGameQuery = "DELETE FROM parity_games WHERE id = $1 RETURNING *";
 
 class DatabaseClient {
     constructor(host, user, password, database, schema) {
@@ -49,14 +52,26 @@ class DatabaseClient {
         return this.queryWithParams(createPositionQuery, params, "Failed to insert new position.");
     }
 
+    deletePosition(id) {
+        return this.queryWithParams(deletePositionQuery, [id], "Failed to delete position.");
+    }
+
     createEdge(name, parityGameId, sourceId, targetId) {
         const params = [name, parityGameId, sourceId, targetId];
         return this.queryWithParams(createEdgeQuery, params, "Failed to insert new edge.");
     }
 
+    deleteEdge(id) {
+        return this.queryWithParams(deleteEdgeQuery, [id], "Failed to delete edge.");
+    }
+
     createParityGame(name, description) {
         const params = [name, description];
         return this.queryWithParams(createParityGameQuery, params, "Failed to insert new parity game.");
+    }
+
+    deleteParityGame(id) {
+        return this.queryWithParams(deleteParityGameQuery, [id], "Failed to delete parity game.");
     }
 
     queryWithParams(queryString, params, errorMessage) {
