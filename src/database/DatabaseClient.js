@@ -25,8 +25,8 @@ class DatabaseClient {
                 this.isConnected = true;
                 console.log("connected to database");
             })
-            .catch((err) => console.log("failed to connect to database", err.stack));
-        client.query(`SET search_path TO ${this.schema}`);
+            .catch((err) => console.log("Failed to connect to database.\n", err.stack));
+        this.client.query(`SET search_path TO ${this.schema}`);
     }
 
     disconnect() {
@@ -47,23 +47,23 @@ class DatabaseClient {
 
     createPosition(name, parityGameId, initial, player0, parity) {
         const params = [name, parityGameId, initial, player0, parity];
-        return this.syncQuery(createPositionQuery, params, "Failed to insert new position.");
+        return this.queryWithParams(createPositionQuery, params, "Failed to insert new position.");
     }
 
     createEdge(name, parityGameId, sourceId, targetId) {
         const params = [name, parityGameId, sourceId, targetId];
-        return this.syncQuery(createEdgeQuery, params, "Failed to insert new edge.");
+        return this.queryWithParams(createEdgeQuery, params, "Failed to insert new edge.");
     }
 
     createParityGame(name, description) {
         const params = [name, description];
-        return this.syncQuery(createParityGameQuery, params, "Failed to insert new parity game.");
+        return this.queryWithParams(createParityGameQuery, params, "Failed to insert new parity game.");
     }
 
-    syncQuery(queryString, params, errorMessage) {
+    queryWithParams(queryString, params, errorMessage) {
         if (this.isConnected) {
             try {
-                return (await this.client.query(queryString, params)).rows[0];
+                return this.client.query(queryString, params).rows[0];
             } catch (err) {
                 console.log(errorMessage, err.stack);
             }
@@ -73,5 +73,4 @@ class DatabaseClient {
     }
 }
 
-
-export {DatabaseClient};
+exports.DatabaseClient = DatabaseClient;

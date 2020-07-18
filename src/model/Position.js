@@ -17,4 +17,4 @@ Position._typeConfig = {
 };
 
 
-export {Position};
+exports.Position = Position;

@@ -24,4 +24,4 @@ Edge._typeConfig = {
 	uniqueKey: 'id'
 };
 
-export {Edge};
+exports.Edge = Edge;

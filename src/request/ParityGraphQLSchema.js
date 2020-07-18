@@ -69,4 +69,4 @@ class ParityGraphQLSchema {
     }
 }
 
-export { ParityGraphQLSchema };
+exports.ParityGraphQLSchema = ParityGraphQLSchema;

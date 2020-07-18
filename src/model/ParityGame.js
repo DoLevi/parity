@@ -24,4 +24,4 @@ ParityGame._typeConfig = {
 	uniqueKey: 'id'
 };
 
-export {ParityGame};
+exports.ParityGame = ParityGame;
