@@ -9,7 +9,8 @@ const dbClient = new DatabaseClient(
 	config.database.host,
 	config.database.user,
 	config.database.password,
-	config.database.database
+	config.database.database,
+	config.database.schema
 );
 dbClient.connect();
 
