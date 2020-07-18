@@ -1,4 +1,5 @@
 const graphql = require("graphql");
+const joinMonster = require("join-monster");
 
 const { ParityGame } = require("../model/ParityGame");
 const { Position } = require("../model/Position");
@@ -32,7 +33,16 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				parity: { type: graphql.GraphQLNonNull(graphql.GraphQLInt) }
 			},
 			resolve: async (parent, args, context, resolveInfo) => {
-                return databaseClient.createPosition(args.name, args.parityGameId, args.initial, args.player0, args.parity);
+				const promise =  databaseClient.createPosition(
+					args.name,
+					args.parityGameId,
+					args.initial,
+					args.player0,
+					args.parity
+				);
+				if (promise) {
+					return (await promise).rows[0];
+				}
 			}
 		},
 		addEdge: {
@@ -44,7 +54,15 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				targetId: { type: graphql.GraphQLNonNull(graphql.GraphQLID) }
 			},
 			resolve: async (parent, args, context, resolveInfo) => {
-                return databaseClient.createEdge(args.name, args.parityGameId, args.sourceId, args.targetId);
+                const promise = databaseClient.createEdge(
+					args.name,
+					args.parityGameId,
+					args.sourceId,
+					args.targetId
+				);
+				if (promise) {
+					return (await promise).rows[0];
+				}
 			}
 		},
 		addParityGame: {
@@ -54,7 +72,13 @@ const generateMutationRoot = (databaseClient) => new graphql.GraphQLObjectType({
 				description: { type: graphql.GraphQLNonNull(graphql.GraphQLString) }
 			},
 			resolve: async (parent, args, context, resolveInfo) => {
-                return databaseClient.createParityGame(args.name, args.description);
+                const promise =  databaseClient.createParityGame(
+					args.name,
+					args.description
+				);
+				if (promise) {
+					return (await promise).rows[0];
+				}
 			}
 		},
 	})

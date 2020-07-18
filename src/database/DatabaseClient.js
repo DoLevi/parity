@@ -1,6 +1,4 @@
-const {
-    Client
-} = require("pg");
+const { Client } = require("pg");
 
 
 const createPositionQuery = "INSERT INTO positions (name, fk_parity_game, intial, player_0, parity) VALUES ($1, $2, $3, $4, $5) RETURNING *";
@@ -23,10 +21,11 @@ class DatabaseClient {
         this.client.connect()
             .then(() => {
                 this.isConnected = true;
-                console.log("connected to database");
+                console.log("Connected to database");
             })
             .catch((err) => console.log("Failed to connect to database.\n", err.stack));
-        this.client.query(`SET search_path TO ${this.schema}`);
+        this.client.query(`SET search_path TO ${this.schema}`)
+            .catch(() => console.log(`Failed to set search_path to ${this.schema}`));
     }
 
     disconnect() {
@@ -63,7 +62,7 @@ class DatabaseClient {
     queryWithParams(queryString, params, errorMessage) {
         if (this.isConnected) {
             try {
-                return this.client.query(queryString, params).rows[0];
+                return this.client.query(queryString, params);
             } catch (err) {
                 console.log(errorMessage, err.stack);
             }
