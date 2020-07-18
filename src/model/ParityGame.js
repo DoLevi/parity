@@ -1,14 +1,27 @@
 const graphql = require("graphql");
-const {Position} = require("./Position");
-const {Edge} = require("./Edge");
+const {
+	Position
+} = require("./Position");
+const {
+	Edge
+} = require("./Edge");
 
 
 const ParityGame = new graphql.GraphQLObjectType({
 	name: 'ParityGame',
 	fields: () => ({
-		id: { type: graphql.GraphQLID},
-		name: { type: graphql.GraphQLString},
-		description: { type: graphql.GraphQLString},
+		id: {
+			type: graphql.GraphQLID,
+			sqlColumn: 'id'
+		},
+		name: {
+			type: graphql.GraphQLString,
+			sqlColumn: 'name'
+		},
+		description: {
+			type: graphql.GraphQLString,
+			sqlColumn: 'description'
+		},
 		positions: {
 			type: graphql.GraphQLList(Position),
 			sqlJoin: (gameTable, posTable) => `${gameTable}.id = ${posTable}.fk_parity_game`
@@ -19,6 +32,7 @@ const ParityGame = new graphql.GraphQLObjectType({
 		},
 	})
 });
+
 ParityGame._typeConfig = {
 	sqlTable: 'parity_games',
 	uniqueKey: 'id'
