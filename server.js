@@ -13,11 +13,11 @@ const dbClient = new DatabaseClient(
 );
 dbClient.connect();
 
-const schema = new ParityGraphQLSchema(dbClient);
+const paritySchema = new ParityGraphQLSchema(dbClient);
 
 const app = express();
 app.use('/api', graphqlHTTP({
-  schema: schema,
+  schema: paritySchema.schema,
   graphiql: true,
 }));
 app.listen(4000);
