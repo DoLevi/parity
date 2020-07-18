@@ -16,7 +16,21 @@ const generateQueryRoot = (databaseClient) => new graphql.GraphQLObjectType({
                     return databaseClient.query(sql);
                 });
             }
-        }
+		},
+		parityGame: {
+			type: ParityGame,
+			args: {
+				id: { type: graphql.GraphQLID }
+			},
+			where: (parityGamesTable, args, context) => {
+				return `${parityGamesTable} = ${args.id}`;
+			},
+			resolve: (parent, arg, context, resolveInfo) => {
+				return joinMonster.default(resolveInfo, {}, sql => {
+					return databaseClient.query(sql)
+				});
+			}
+		}
     })
 });
 
