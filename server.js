@@ -1,8 +1,5 @@
 const express = require("express");
-const joinMonster = require("join-monster");
-const graphql = require("graphql");
 const { graphqlHTTP } = require("express-graphql");
-const { Client } = require("pg");
 const { DatabaseClient } = require("./src/database/DatabaseClient");
 const { ParityGraphQLSchema } = require("./src/request/ParityGraphQLSchema");
 
