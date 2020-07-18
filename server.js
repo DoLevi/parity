@@ -22,4 +22,3 @@ app.use('/api', graphqlHTTP({
   graphiql: true,
 }));
 app.listen(4000);
-

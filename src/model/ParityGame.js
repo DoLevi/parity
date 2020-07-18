@@ -23,11 +23,11 @@ const ParityGame = new graphql.GraphQLObjectType({
 			sqlColumn: 'description'
 		},
 		positions: {
-			type: graphql.GraphQLList(Position),
+			type: new graphql.GraphQLList(Position),
 			sqlJoin: (gameTable, posTable) => `${gameTable}.id = ${posTable}.fk_parity_game`
 		},
 		edges: {
-			type: graphql.GraphQLList(Edge),
+			type: new graphql.GraphQLList(Edge),
 			sqlJoin: (gameTable, edgeTable) => `${gameTable}.id = ${edgeTable}.fk_parity_game`
 		},
 	})
