@@ -33,6 +33,14 @@ type Query @sqlmancer(dialect: POSTGRES) {
 
 type Mutation @sqlmancer(dialect: POSTGRES) {
     createParityGame(name: String!, description: String!): ParityGame!
+    updateParityGame(parityGameId: ID!, name: String, description: String!): ParityGame!
+    deleteParityGame(parityGameId: ID!): Boolean!
+
     createPosition(parityGameId: ID!, name: String!, initial: Boolean!, player0: Boolean!, parity: Int!): Position!
+    updatePosition(positionId: ID!, name: String, initial: Boolean, player0: Boolean, parity: Int): Position!
+    deletePosition(positionId: ID!): Boolean!
+
     createEdge(parityGameId: ID!, name: String!, sourceId: ID!, targetId: ID!): Edge!
+    updateEdge(edgeId: ID!, name: String, sourceId: ID, targetId: ID): Edge!
+    deleteEdge(edgeId: ID!): Boolean!
 }

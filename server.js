@@ -58,6 +58,24 @@ const resolvers = {
 					.execute();
 			});
 		},
+		updateParityGame: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				let {
+					parityGameId,
+					...input
+				} = args;
+				parityGameId = await ParityGame.updateById(parityGameId, input)
+					.transaction(trx)
+					.execute();
+				return ParityGame.findOne(parityGameId)
+					.resolveInfo(info)
+					.transaction(trx)
+					.execute();
+			});
+		},
+		deleteParityGame: (root, args, ctx, info) => {
+			return ParityGame.deleteById(args.parityGameId);
+		},
 		createPosition: (root, args, ctx, info) => {
 			return client.transaction(async trx => {
 				const positionId = await Position.createOne({
@@ -76,6 +94,24 @@ const resolvers = {
 					.execute();
 			});
 		},
+		updatePosition: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				let {
+					positionId,
+					...input
+				} = args;
+				positionId = await Position.updateById(positionId, input)
+					.transaction(trx)
+					.execute();
+				return Position.findOne(positionId)
+					.resolveInfo(info)
+					.transaction(trx)
+					.execute();
+			});
+		},
+		deletePosition: (root, args, ctx, info) => {
+			return Position.deleteById(args.positionId);
+		},
 		createEdge: (root, args, ctx, info) => {
 			return client.transaction(async trx => {
 				const edgeId = await Edge.createOne({
@@ -92,6 +128,24 @@ const resolvers = {
 					.transaction(trx)
 					.execute();
 			});
+		},
+		updateEdge: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				let {
+					edgeId,
+					...input
+				} = args;
+				edgeId = await Edge.updateById(edgeId, input)
+					.transaction(trx)
+					.execute();
+				return Edge.findOne()
+					.resolveInfo(info)
+					.transaction(trx)
+					.execute();
+			});
+		},
+		deleteEdge: (root, args, ctx, info) => {
+			return Edge.deleteById(args.edgeId);
 		}
 	}
 };
