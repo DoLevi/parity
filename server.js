@@ -1,24 +1,53 @@
 const express = require("express");
-const { graphqlHTTP } = require("express-graphql");
-const { DatabaseClient } = require("./src/database/DatabaseClient");
-const { ParityGraphQLSchema } = require("./src/request/ParityGraphQLSchema");
+const {
+	graphqlHTTP
+} = require("express-graphql");
+const fs = require("fs");
+const Knex = require("knex");
+const {
+	createSqlmancerClient, makeSqlmancerSchema
+} = require("sqlmancer");
 
-const config = require("./config/config")[process.env.NODE_ENV || "development"];
+const config = require("./config/config")["development"];
 
-const dbClient = new DatabaseClient(
-	config.database.host,
-	config.database.user,
-	config.database.password,
-	config.database.database,
-	config.database.schema
-);
-dbClient.connect();
 
-const paritySchema = new ParityGraphQLSchema(dbClient);
+const knexInstance = Knex({
+	client: 'pg',
+	connection: {
+		host: config.database.host,
+		user: config.database.user,
+		password: config.database.password,
+		database: config.database.database
+	},
+	searchPath: [config.database.schema]
+});
 
-const app = express();
-app.use('/api', graphqlHTTP({
-  schema: paritySchema.schema,
-  graphiql: true,
-}));
-app.listen(4000);
+const schemaPath = './paritySchema.graphql';
+const { models: {
+	ParityGame
+}} = createSqlmancerClient(schemaPath, knexInstance);
+
+const resolvers = {
+	Query: {
+		parityGames: (root, args, ctx, info) => {
+			return ParityGame
+				.findMany()
+				.resolveInfo(info)
+				.execute();
+		}
+	}
+};
+
+fs.readFile(schemaPath, 'ascii', (err, typeDefs) => {
+	if (!err) {
+		const schema = makeSqlmancerSchema({ typeDefs, resolvers });
+		const app = express();
+		app.use('/api', graphqlHTTP({
+			schema: schema,
+			graphiql: true,
+		}));
+		app.listen(4000);
+	} else {
+		console.log("Unable to read schema", schemaPath, "\n", err.stack);
+	}
+});

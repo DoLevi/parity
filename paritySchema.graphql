@@ -1,0 +1,26 @@
+type Position @model(table: "positions", pk: "id") {
+    id: ID!
+    name: String!
+    initial: Boolean!
+    player0: Boolean! @col(name: "player_0")
+    parity: Int!
+}
+
+type Edge @model(table: "edges", pk: "id") {
+    id: ID!
+    name: String!
+    source: Position! @relate(on: { from: "fk_source", to: "id" })
+    target: Position! @relate(on: { from: "fk_target", to: "id" })
+}
+
+type ParityGame @model(table: "parity_games", pk: "id") {
+    id: ID!
+    name: String!
+    description: String!
+    positions: [Position]! @relate(on: { from: "id", to: "fk_parity_game" })
+    edges: [Edge]! @relate(on: { from: "id", to: "fk_parity_game" })
+}
+
+type Query @sqlmancer(dialect: POSTGRES) {
+    parityGames: [ParityGame!]!
+}
