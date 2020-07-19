@@ -45,7 +45,7 @@ const resolvers = {
 	Mutation: {
 		createParityGame: (root, args, ctx, info) => {
 			return client.transaction(async trx => {
-				const parityGameId = await ParityGame.createOne({
+				const parityGameId = ParityGame.createOne({
 						name: args.name,
 						description: args.description
 					})
@@ -53,6 +53,7 @@ const resolvers = {
 					.execute();
 				return ParityGame
 					.findOne(parityGameId)
+					.resolveInfo(info)
 					.transaction(trx)
 					.execute();
 			});
@@ -70,6 +71,7 @@ const resolvers = {
 					.execute();
 				return Position
 					.findOne(positionId)
+					.resolveInfo(info)
 					.transaction(trx)
 					.execute();
 			});
@@ -84,13 +86,11 @@ const resolvers = {
 					})
 					.transaction(trx)
 					.execute();
-				const res = Edge
+				return Edge
 					.findOne(edgeId)
-					.transaction(trx)
 					.resolveInfo(info)
+					.transaction(trx)
 					.execute();
-				res.then(console.log);
-				return res;
 			});
 		}
 	}
