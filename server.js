@@ -5,7 +5,8 @@ const {
 const fs = require("fs");
 const Knex = require("knex");
 const {
-	createSqlmancerClient, makeSqlmancerSchema
+	createSqlmancerClient,
+	makeSqlmancerSchema
 } = require("sqlmancer");
 
 const config = require("./config/config")["development"];
@@ -23,9 +24,14 @@ const knexInstance = Knex({
 });
 
 const schemaPath = './paritySchema.graphql';
-const { models: {
-	ParityGame
-}} = createSqlmancerClient(schemaPath, knexInstance);
+const {
+	models: {
+		ParityGame,
+		Position,
+		Edge
+	},
+	client
+} = createSqlmancerClient(schemaPath, knexInstance);
 
 const resolvers = {
 	Query: {
@@ -35,12 +41,67 @@ const resolvers = {
 				.resolveInfo(info)
 				.execute();
 		}
+	},
+	Mutation: {
+		createParityGame: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				const parityGameId = await ParityGame.createOne({
+						name: args.name,
+						description: args.description
+					})
+					.transaction(trx)
+					.execute();
+				return ParityGame
+					.findOne(parityGameId)
+					.transaction(trx)
+					.execute();
+			});
+		},
+		createPosition: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				const positionId = await Position.createOne({
+						parityGameId: args.parityGameId,
+						name: args.name,
+						initial: args.initial,
+						player0: args.player0,
+						parity: args.parity
+					})
+					.transaction(trx)
+					.execute();
+				return Position
+					.findOne(positionId)
+					.transaction(trx)
+					.execute();
+			});
+		},
+		createEdge: (root, args, ctx, info) => {
+			return client.transaction(async trx => {
+				const edgeId = await Edge.createOne({
+						parityGameId: args.parityGameId,
+						name: args.name,
+						sourceId: args.sourceId,
+						targetId: args.targetId
+					})
+					.transaction(trx)
+					.execute();
+				const res = Edge
+					.findOne(edgeId)
+					.transaction(trx)
+					.resolveInfo(info)
+					.execute();
+				res.then(console.log);
+				return res;
+			});
+		}
 	}
 };
 
 fs.readFile(schemaPath, 'ascii', (err, typeDefs) => {
 	if (!err) {
-		const schema = makeSqlmancerSchema({ typeDefs, resolvers });
+		const schema = makeSqlmancerSchema({
+			typeDefs,
+			resolvers
+		});
 		const app = express();
 		app.use('/api', graphqlHTTP({
 			schema: schema,

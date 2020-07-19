@@ -4,6 +4,8 @@ type Position @model(table: "positions", pk: "id") {
     initial: Boolean!
     player0: Boolean! @col(name: "player_0")
     parity: Int!
+
+    parityGameId: ID! @col(name: "fk_parity_game") @private
 }
 
 type Edge @model(table: "edges", pk: "id") {
@@ -11,6 +13,10 @@ type Edge @model(table: "edges", pk: "id") {
     name: String!
     source: Position! @relate(on: { from: "fk_source", to: "id" })
     target: Position! @relate(on: { from: "fk_target", to: "id" })
+
+    parityGameId: ID! @col(name: "fk_parity_game") @private
+    sourceId: ID! @col(name: "fk_source") @private
+    targetId: ID! @col(name: "fk_target") @private
 }
 
 type ParityGame @model(table: "parity_games", pk: "id") {
@@ -23,4 +29,10 @@ type ParityGame @model(table: "parity_games", pk: "id") {
 
 type Query @sqlmancer(dialect: POSTGRES) {
     parityGames: [ParityGame!]!
+}
+
+type Mutation @sqlmancer(dialect: POSTGRES) {
+    createParityGame(name: String!, description: String!): ParityGame!
+    createPosition(parityGameId: ID!, name: String!, initial: Boolean!, player0: Boolean!, parity: Int!): Position!
+    createEdge(parityGameId: ID!, name: String!, sourceId: ID!, targetId: ID!): Edge!
 }
