@@ -18,6 +18,9 @@ CREATE TABLE positions (
 	player_0 BOOLEAN NOT NULL,
 	parity INTEGER NOT NULL,
 
+	position_x: INTEGER NOT NULL,
+	position_y: INTEGER NOT NULL,
+
 	PRIMARY KEY(id),
 	FOREIGN KEY(fk_parity_game) REFERENCES parity_games(id),
 	UNIQUE(name, fk_parity_game)

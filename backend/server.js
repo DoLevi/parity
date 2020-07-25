@@ -83,7 +83,9 @@ const resolvers = {
 						name: args.name,
 						initial: args.initial,
 						player0: args.player0,
-						parity: args.parity
+						parity: args.parity,
+						positionX: args.positionX,
+						positionY: args.positionY
 					})
 					.transaction(trx)
 					.execute();

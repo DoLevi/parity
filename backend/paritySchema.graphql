@@ -5,6 +5,9 @@ type Position @model(table: "positions", pk: "id") {
     player0: Boolean! @col(name: "player_0")
     parity: Int!
 
+    positionX: Int! @col(name: "position_x")
+    positionY: Int! @col(name: "position_y")
+
     parityGameId: ID! @col(name: "fk_parity_game") @private
 }
 
@@ -36,7 +39,7 @@ type Mutation @sqlmancer(dialect: POSTGRES) {
     updateParityGame(parityGameId: ID!, name: String, description: String): ParityGame!
     deleteParityGame(parityGameId: ID!): Boolean!
 
-    createPosition(parityGameId: ID!, name: String!, initial: Boolean!, player0: Boolean!, parity: Int!): Position!
+    createPosition(parityGameId: ID!, name: String!, initial: Boolean!, player0: Boolean!, parity: Int!, positionX: Int!, positionY: Int!): Position!
     updatePosition(positionId: ID!, name: String, initial: Boolean, player0: Boolean, parity: Int): Position!
     deletePosition(positionId: ID!): Boolean!
 
