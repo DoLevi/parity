@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import Notifications from 'react-notify-toast';
 
 ReactDOM.render(
   <React.StrictMode>
+    <Notifications timeout={1500}/>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
