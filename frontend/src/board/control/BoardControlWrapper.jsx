@@ -11,7 +11,7 @@ const BoardControlWrapper = ({addPoint, removePoint, addEdge, removeEdge}) => {
     const {
         generateInputObjects,
         generateOnSubmit
-    } = useBoardControl(addPoint, () => setPromptState(undefined));
+    } = useBoardControl(() => setPromptState(undefined), addPoint, removePoint, addEdge, removeEdge);
 
     return (
         <>

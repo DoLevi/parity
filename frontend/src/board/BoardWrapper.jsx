@@ -7,16 +7,16 @@ import BoardControlWrapper from './control/BoardControlWrapper';
 
 
 const BoardWrapper = () => {
-    const {jxgLogic, addPoint} = useBoard([], []);
+    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge} = useBoard([], []);
 
     return (
         <Flexbox flexDirection="column">
             <BoardPure jxgLogic={jxgLogic} />
 
             <BoardControlWrapper addPoint={addPoint}
-                                 removePoint={() => {}}
-                                 addEdge={() => {}}
-                                 removeEdge={() => {}}/>
+                                 removePoint={removePoint}
+                                 addEdge={addEdge}
+                                 removeEdge={removeEdge}/>
         </Flexbox>
     );
 };

@@ -12,11 +12,15 @@ const useArray = (getArray, setArray) => {
         }
     }
 
-    const removeItem = (itemMatcher, max) => {
-        const effectiveMax = max === undefined ? 1 : max;
+    const removeItem = (item, max) => {
+        let effectiveMax = max === undefined ? 1 : max;
         let toRemain = [];
         for (let knownItem of getArray()) {
-            if (!effectiveMax || itemMatcher(knownItem)) {
+            if (knownItem !== item) {
+                toRemain.push(knownItem);
+            } else if (knownItem === item && effectiveMax) {
+                effectiveMax--;
+            } else {
                 toRemain.push(knownItem);
             }
         }
