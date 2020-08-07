@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ParityClient from "../api/ParityClient";
 
 
 const useGameControl = (setGame, unsetGameControlState) => {
@@ -10,8 +9,6 @@ const useGameControl = (setGame, unsetGameControlState) => {
         setValue(event.target.value);
         unsetGameControlState();
     };
-
-    ParityClient.getParityGameList(setOptions);
 
     return {
         options,
