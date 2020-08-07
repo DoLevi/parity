@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Flexbox from 'flexbox-react';
 
 import useBoard from './useBoard';
@@ -8,7 +8,7 @@ import GameControlWrapper from '../game/GameControlWrapper';
 
 
 const BoardWrapper = () => {
-    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame} = useBoard([], []);
+    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame, getGame} = useBoard([], []);
 
     return (
         <Flexbox flexDirection="column" padding="16px">
@@ -19,7 +19,7 @@ const BoardWrapper = () => {
                                  addEdge={addEdge}
                                  removeEdge={removeEdge}/>
             
-            <GameControlWrapper setGame={setGame}/>
+            <GameControlWrapper setGame={setGame} getGame={getGame}/>
         </Flexbox>
     );
 };

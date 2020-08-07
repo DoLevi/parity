@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import Modal from "react-modal";
 
 import BoardControlPure from "./BoardControlPure";
-import BoardControlInputPure from "../../utils/ParityInputForm";
 import useBoardControl from "./useBoardControl";
 import ParityModal from "../../utils/ParityModal";
 import ParityInputForm from "../../utils/ParityInputForm";

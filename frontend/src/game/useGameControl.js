@@ -1,19 +1,25 @@
-import { useState } from "react";
+const useGameControl = (setGame, getGame) => {
+    const downloadGame = () => {
+        const gameAsString = JSON.stringify(getGame());
+        let element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf8,' + encodeURIComponent(gameAsString));
+        element.setAttribute('download', 'parityGame.json');
 
+        element.style.display = 'none';
+        document.body.append(element);
 
-const useGameControl = (setGame, unsetGameControlState) => {
-    const [options, setOptions] = useState([]);
-    const [value, setValue] = useState(undefined);
+        element.click();
+        
+        document.body.removeChild(element);
+    };
 
-    const onChange = (event) => {
-        setValue(event.target.value);
-        unsetGameControlState();
+    const uploadGame = () => {
+        const gameAsObject = JSON.parse();
     };
 
     return {
-        options,
-        value,
-        onChange
+        downloadGame,
+        uploadGame
     };
 };
 
