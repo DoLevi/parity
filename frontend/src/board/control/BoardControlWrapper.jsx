@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 
 import BoardControlPure from "./BoardControlPure";
-import BoardControlInputPure from "./BoardControlInputPure";
+import BoardControlInputPure from "../../utils/ParityInputForm";
 import useBoardControl from "./useBoardControl";
+import ParityModal from "../../utils/ParityModal";
+import ParityInputForm from "../../utils/ParityInputForm";
 
 
 const BoardControlWrapper = ({addPoint, removePoint, addEdge, removeEdge}) => {
@@ -17,29 +19,13 @@ const BoardControlWrapper = ({addPoint, removePoint, addEdge, removeEdge}) => {
         <>
             <BoardControlPure setPromptState={setPromptState}/>
 
-            <Modal isOpen={!!promptState}
-                   onRequestClose={() => setPromptState(undefined)}
-                   style = {{
-                        overlay: {
-                            backgroundColor: 'rgba(0,0,0,0.64)',
-                            opacity: 1,
-                            zIndex: 400
-                        },
-                        content: {
-                            top: '50%',
-                            left: '50%',
-                            right: 'auto',
-                            bottom: 'auto',
-                            marginRight: '-50%',
-                            transform: 'translate(-50%, -50%)'
-                        }
-                       }}>
+            <ParityModal isOpen={!!promptState} onRequestClose={() => setPromptState(undefined)}>
                 {
                     promptState &&
-                    <BoardControlInputPure inputObjects={generateInputObjects(promptState)}
-                                           onSubmit={generateOnSubmit(promptState)}/>
+                    <ParityInputForm inputObjects={generateInputObjects(promptState)}
+                                     onSubmit={generateOnSubmit(promptState)}/>
                 }
-            </Modal>
+            </ParityModal>
         </>
     );
 };

@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "flexbox-react": "^4.4.0",
     "jsxgraph-react-js": "^1.0.4",
+    "qs": "^6.9.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-modal": "^3.11.2",

@@ -2,7 +2,7 @@ import React from "react";
 import Flexbox from "flexbox-react";
 
 
-const BoardControlInputPure = ({inputObjects, onSubmit}) => (
+const ParityInputForm = ({inputObjects, onSubmit}) => (
     <form style={{margin: "16px"}} onSubmit={onSubmit}>
         <Flexbox flexWrap="wrap" flexDirection="column">
             {
@@ -24,4 +24,4 @@ const BoardControlInputPure = ({inputObjects, onSubmit}) => (
     </form>
 );
 
-export default BoardControlInputPure;
+export default ParityInputForm;

@@ -27,8 +27,10 @@ const useBoard = (initialPoints, initialEdges) => {
                 ...point,
                 object: pointObject
             });
+            return 0;
         } else {
             notify.show(`The name "${point.name}" is already taken.`, 'error', 3000);
+            return 1;
         }
     };
 
@@ -60,6 +62,7 @@ const useBoard = (initialPoints, initialEdges) => {
                         ...edge,
                         object: lineObject
                     });
+                    return 0;
                 } else {
                     notify.show(`The name "${edge.name}" does not belong to any (target) node.`, 'error', 3000);
                 }
@@ -69,6 +72,7 @@ const useBoard = (initialPoints, initialEdges) => {
         } else {
             notify.show(`The name "${edge.name}" is already taken.`, 'error', 3000);
         }
+        return 1;
     };
 
     const removeEdge = (name) => {
@@ -112,10 +116,71 @@ const useBoard = (initialPoints, initialEdges) => {
         board.unsuspendUpdate();
     };
 
+    const setGame = (parityGame) => {
+        // local "backup"
+        const prevPoints = points;
+        const prevEdges = edges;
+
+        // Clear previous board
+        prevEdges.forEach((edge) => removeEdge(edge.name));
+        prevPoints.forEach((point) => removePoint(point.name));
+
+        // Load new board
+        let uploadedPointNames = [];
+        for (const position of parityGame.positions) {
+            const newPosition = {
+                x: position.positionX,
+                y: position.positionY,
+                name: position.name
+            };
+            if (!addPoint(newPosition)) {
+                notify.show("Supplied broken parity game. Rolling back upload.");
+                uploadedPointNames.forEach(removePoint);
+                prevPoints.forEach(addPoint);
+                return 1;
+            }
+            uploadedPointNames.push(position.name);
+        }
+
+        let uploadedEdgeNames = [];
+        for (const edge of parityGame.edges) {
+            const newEdge = {
+                name: edge.name,
+                sourceName: edge.source.name,
+                targetName: edge.target.name
+            };
+            if (!addEdge(newEdge)) {
+                notify.show("Supplied broken parity game. Rolling back upload.");
+                uploadedEdgeNames.forEach(removeEdge);
+                uploadedPointNames.forEach(removePoint);
+                prevPoints.forEach(addPoint);
+                prevEdges.forEach(addEdge);
+                return 1;
+            }
+            uploadedEdgeNames.push(edge.name);
+        }
+        return 0;
+    };
+
+    const getGame = () => ({
+        id: undefined,
+        name: undefined,
+        description: undefined,
+        positions: points.map((point) => {
+            const {object, ...rawPoint} = point;
+            return rawPoint;
+        }),
+        edges: edges.map((edge) => {
+            const {object, ...rawEdge} = edge;
+            return rawEdge;
+        })
+    });
+
     return {
         jxgLogic,
         addPoint, removePoint,
-        addEdge, removeEdge
+        addEdge, removeEdge,
+        setGame, getGame
     };
 };
 
