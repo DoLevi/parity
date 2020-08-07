@@ -3,6 +3,16 @@ import useArray from '../utils/useArray';
 import { notify } from 'react-notify-toast';
 
 
+const nodeToPoint = (node) => ({
+    name: node.name
+});
+
+const pointToNode = (point) => ({
+    name: point.name,
+    x: point.coords.usrCoords[1],
+    y: point.coords.usrCoords[2]
+});
+
 const edgeToLine = (edge) => ({
     name: edge.name,
     straightFirst: false,
@@ -10,26 +20,29 @@ const edgeToLine = (edge) => ({
     strokeWidth: 2
 });
 
-const useBoard = (initialPoints, initialEdges) => {
+const lineToEdge = (line) => ({
+    name: line.name,
+    sourceName: line.point1.name,
+    targetName: line.point2.name
+});
+
+const useBoard = () => {
     const [cachedBoard, setCachedBoard] = useState(undefined);
 
-    const [points, setPoints] = useState(initialPoints);
+    const [points, setPoints] = useState([]);
     const {addItem: addPointRaw, removeItem: removePointRaw} = useArray(() => points, setPoints);
 
-    const [edges, setEdges] = useState(initialEdges);
+    const [edges, setEdges] = useState([]);
     const {addItem: addEdgeRaw, removeItem: removeEdgeRaw} = useArray(() => edges, setEdges);
 
-    const addPoint = (point) => {
-        const nameOccupied = points.reduce((prev, next) => prev || next.name === point.name, false);
+    const addPoint = (node) => {
+        const nameOccupied = points.reduce((prev, next) => prev || next.name === node.name, false);
         if (!nameOccupied) {
-            const pointObject = cachedBoard.create('point', [point.x, point.y], {name: point.name});
-            addPointRaw({
-                ...point,
-                object: pointObject
-            });
+            const pointObject = cachedBoard.create('point', [node.x, node.y], nodeToPoint(node));
+            addPointRaw(pointObject);
             return 0;
         } else {
-            notify.show(`The name "${point.name}" is already taken.`, 'error', 3000);
+            notify.show(`The name "${node.name}" is already taken.`, 'error', 3000);
             return 1;
         }
     };
@@ -57,11 +70,8 @@ const useBoard = (initialPoints, initialEdges) => {
             if (sourcePoint) {
                 const targetPoint = points.find((knownPoint) => knownPoint.name === edge.targetName);
                 if (targetPoint) {
-                    const lineObject = cachedBoard.create('line', [sourcePoint.object, targetPoint.object], edgeToLine(edge));
-                    addEdgeRaw({
-                        ...edge,
-                        object: lineObject
-                    });
+                    const lineObject = cachedBoard.create('line', [sourcePoint, targetPoint], edgeToLine(edge));
+                    addEdgeRaw(lineObject);
                     return 0;
                 } else {
                     notify.show(`The name "${edge.name}" does not belong to any (target) node.`, 'error', 3000);
@@ -90,30 +100,6 @@ const useBoard = (initialPoints, initialEdges) => {
         if (!cachedBoard) {
             setCachedBoard(board);
         }
-        board.suspendUpdate();
-
-        const renderedPoints = points
-            .map((point) => {
-                const pointObject = board.create('point', [point.x, point.y], { name: point.name });
-                return {
-                    ...point,
-                    object: pointObject
-                };
-            });
-        setPoints(renderedPoints);
-
-        const renderedLines = edges.map((edge) => {
-            const sourceObject = renderedPoints.find((knownPoint) => knownPoint.name === edge.sourceName);
-            const targetObject = renderedPoints.find((knownPoint) => knownPoint.name === edge.targetName);
-            const lineObject = board.create('line', [sourceObject, targetObject], edgeToLine(edge));
-            return {
-                ...edge,
-                object: lineObject
-            };
-        });
-        setEdges(renderedLines);
-
-        board.unsuspendUpdate();
     };
 
     const setGame = (parityGame) => {
@@ -166,14 +152,8 @@ const useBoard = (initialPoints, initialEdges) => {
         id: undefined,
         name: undefined,
         description: undefined,
-        positions: points.map((point) => {
-            const {object, ...rawPoint} = point;
-            return rawPoint;
-        }),
-        edges: edges.map((edge) => {
-            const {object, ...rawEdge} = edge;
-            return rawEdge;
-        })
+        positions: points.map(pointToNode),
+        edges: edges.map(lineToEdge)
     });
 
     return {
