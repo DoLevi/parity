@@ -10,7 +10,7 @@ const BoardWrapper = () => {
     const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame, points, lines} = useBoard();
 
     return (
-        <Flexbox flexDirection="row" padding="16px" justifyContent="center">
+        <Flexbox flexDirection="row" padding="16px" justifyContent="center" minWidth="700px">
             <ControlPanelWrapper setGame={setGame}
                                  points={points}
                                  lines={lines}
