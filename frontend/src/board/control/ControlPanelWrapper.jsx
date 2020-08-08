@@ -13,7 +13,7 @@ const ControlPanelWrapper = ({setGame, points, lines, addNode, removeNode, addEd
     const {
         generateInputObjects,
         generateOnSubmit
-    } = useBoardControl(() => setPromptState(undefined), addNode, removeNode, addEdge, removeEdge);
+    } = useBoardControl(() => setPromptState(undefined), addNode, addEdge);
     const {
         downloadGame,
         uploadGame,
