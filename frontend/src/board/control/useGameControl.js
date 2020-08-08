@@ -22,12 +22,12 @@ const useGameControl = (setGame, points, lines) => {
     useEffect(() => setNodeObjects({
         on: nodeObjects.on,
         nodes: nodeObjects.on ? points.map(pointToNode) : []
-    }), [points]);
+    }), [points, nodeObjects.on]);
 
     useEffect(() => setEdgeObjects({
         on: edgeObjects.on,
         edges: edgeObjects.on ? lines.map(lineToEdge) : []
-    }), [lines]);
+    }), [lines, edgeObjects.on]);
 
     const downloadGame = () => {
         const gameAsString = JSON.stringify({
@@ -72,14 +72,8 @@ const useGameControl = (setGame, points, lines) => {
         document.body.removeChild(element);
     };
 
-    const toggleNodeObjects = () => setNodeObjects({
-        on: !nodeObjects.on,
-        nodes: nodeObjects.on ? points.map(pointToNode) : []
-    });
-    const toggleEdgeObjects = () => setEdgeObjects({
-        on: !edgeObjects.on,
-        edges: edgeObjects.on ? lines.map(lineToEdge) : []
-    });
+    const toggleNodeObjects = () => setNodeObjects({ ...nodeObjects, on: !nodeObjects.on });
+    const toggleEdgeObjects = () => setEdgeObjects({ ...edgeObjects, on: !edgeObjects.on });
 
     return {
         downloadGame,

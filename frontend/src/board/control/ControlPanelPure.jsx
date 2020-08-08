@@ -69,7 +69,7 @@ const ControlPanelPure = ({
         </ControlHeader>
 
         {
-            !nodeObjects.on &&
+            nodeObjects.on &&
             <PrimaryControlElement onClick={() => setPromptState('addNode')}>
                 Add node
             </PrimaryControlElement>
@@ -93,7 +93,7 @@ const ControlPanelPure = ({
         </ControlHeader>
 
         {
-            !edgeObjects.on &&
+            edgeObjects.on &&
             <PrimaryControlElement onClick={() => setPromptState('addEdge')}>
                 Add edge
             </PrimaryControlElement>
