@@ -9,23 +9,11 @@ const nodeToPoint = (node) => ({
     y: node.y
 });
 
-const pointToNode = (point) => ({
-    name: point.name,
-    x: point.coords.usrCoords[1],
-    y: point.coords.usrCoords[2]
-});
-
 const edgeToLine = (edge) => ({
     name: edge.name,
     straightFirst: false,
     straightLast: false,
     strokeWidth: 2
-});
-
-const lineToEdge = (line) => ({
-    name: line.name,
-    sourceName: line.point1.name,
-    targetName: line.point2.name
 });
 
 const useBoard = () => {
@@ -166,19 +154,12 @@ const useBoard = () => {
         setEdges(renderedEdges);
     };
 
-    const getGame = () => ({
-        id: undefined,
-        name: undefined,
-        description: undefined,
-        positions: points.map(pointToNode),
-        edges: edges.map(lineToEdge)
-    });
-
     return {
         jxgLogic,
         addPoint, removePoint,
         addEdge, removeEdge,
-        setGame, getGame
+        setGame,
+        points, lines: edges
     };
 };
 

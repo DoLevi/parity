@@ -4,22 +4,22 @@ import Flexbox from 'flexbox-react';
 import useBoard from './useBoard';
 import BoardPure from './BoardPure';
 import BoardControlWrapper from './control/BoardControlWrapper';
-import GameControlWrapper from '../game/GameControlWrapper';
+import ControlPanelWrapper from './control/ControlPanelWrapper';
 
 
 const BoardWrapper = () => {
-    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame, getGame} = useBoard([], []);
+    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame, points, lines} = useBoard();
 
     return (
-        <Flexbox flexDirection="column" padding="16px">
-            <BoardPure jxgLogic={jxgLogic} />
+        <Flexbox flexDirection="row" padding="16px">
+            <ControlPanelWrapper setGame={setGame} points={points} lines={lines}/>
 
             <BoardControlWrapper addPoint={addPoint}
                                  removePoint={removePoint}
                                  addEdge={addEdge}
                                  removeEdge={removeEdge}/>
-            
-            <GameControlWrapper setGame={setGame} getGame={getGame}/>
+
+            <BoardPure jxgLogic={jxgLogic} />
         </Flexbox>
     );
 };
