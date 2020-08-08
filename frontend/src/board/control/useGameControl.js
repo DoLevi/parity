@@ -53,7 +53,6 @@ const useGameControl = (setGame, points, lines) => {
     };
 
     const uploadGame = () => {
-        console.log(points.map(pointToNode));
         let element = document.createElement('input');
         element.type = 'file';
         element.onchange = (event) => {
