@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 
 
 const pointToNode = (point) => ({
@@ -19,6 +18,16 @@ const useGameControl = (setGame, points, lines) => {
     const [edgeObjects, setEdgeObjects] = useState({on: true, edges: lines.map(lineToEdge)});
     const [gameControlOpen, setGameControlOpen] = useState(true);
     const toggleGameControlOpen = () => setGameControlOpen(!gameControlOpen);
+
+    useEffect(() => setNodeObjects({
+        on: nodeObjects.on,
+        nodes: nodeObjects.on ? points.map(pointToNode) : []
+    }), [points]);
+
+    useEffect(() => setEdgeObjects({
+        on: edgeObjects.on,
+        edges: edgeObjects.on ? lines.map(lineToEdge) : []
+    }), [lines]);
 
     const downloadGame = () => {
         const gameAsString = JSON.stringify({
