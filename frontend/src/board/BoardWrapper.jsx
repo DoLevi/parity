@@ -7,14 +7,14 @@ import ControlPanelWrapper from './control/ControlPanelWrapper';
 
 
 const BoardWrapper = () => {
-    const {jxgLogic, addPoint, removePoint, addEdge, removeEdge, setGame, points, lines} = useBoard();
+    const {jxgLogic, addNode, removePoint, addEdge, removeEdge, setGame, points, lines} = useBoard();
 
     return (
         <Flexbox flexDirection="row" padding="16px" justifyContent="center" minWidth="700px">
             <ControlPanelWrapper setGame={setGame}
                                  points={points}
                                  lines={lines}
-                                 addNode={addPoint}
+                                 addNode={addNode}
                                  removeNode={removePoint}
                                  addEdge={addEdge}
                                  removeEdge={removeEdge}/>

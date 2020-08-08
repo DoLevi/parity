@@ -3,6 +3,7 @@ import { notify } from 'react-notify-toast';
 import useArray from '../utils/useArray';
 
 
+// TODO: add properties: initial, player0, parity
 const nodeToPoint = (node) => ({
     name: node.name,
     x: node.x,
@@ -57,7 +58,7 @@ const useBoard = () => {
         return undefined;
     };
 
-    const addPoint = (node) => {
+    const addNode = (node) => {
         const point = validateNode(node, points);
         if (point) {
             const pointObject = cachedBoard.create('point', [point.x, point.y], point);
@@ -156,7 +157,7 @@ const useBoard = () => {
 
     return {
         jxgLogic,
-        addPoint, removePoint,
+        addNode, removePoint,
         addEdge, removeEdge,
         setGame,
         points, lines: edges
