@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import useArray from '../utils/useArray';
 import { notify } from 'react-notify-toast';
+import useArray from '../utils/useArray';
 
 
 const nodeToPoint = (node) => ({
-    name: node.name
+    name: node.name,
+    x: node.x,
+    y: node.y
 });
 
 const pointToNode = (point) => ({
@@ -35,44 +37,26 @@ const useBoard = () => {
     const [edges, setEdges] = useState([]);
     const {addItem: addEdgeRaw, removeItem: removeEdgeRaw} = useArray(() => edges, setEdges);
 
-    const addPoint = (node) => {
-        const nameOccupied = points.reduce((prev, next) => prev || next.name === node.name, false);
-        if (!nameOccupied) {
-            const pointObject = cachedBoard.create('point', [node.x, node.y], nodeToPoint(node));
-            addPointRaw(pointObject);
-            return 0;
-        } else {
+    const validateNode = (node, knownPoints) => {
+        const nameOccupied = knownPoints.reduce((prev, next) => prev || next.name === node.name, false);
+        if (nameOccupied) {
             notify.show(`The name "${node.name}" is already taken.`, 'error', 3000);
-            return 1;
+            return undefined;
         }
+        return nodeToPoint(node);
     };
-
-    const removePoint = (name) => {
-        const knownPoint = points.find((knownPoint) => knownPoint.name === name);
-
-        if (knownPoint) {
-            const hasConnectedEdges = edges.reduce((prev, next) => prev || next.sourceName === knownPoint.name || next.targetName === knownPoint.name, false);
-            if (!hasConnectedEdges) {
-                removePointRaw(knownPoint);
-                cachedBoard.removeObject(knownPoint.object);
-            } else {
-                notify.show(`Cannot remove node "${name}": Edges depend on this node.`, 'error', 3000);
-            }
-        } else {
-            notify.show(`The node name "${name}" is unknown.`, 'error', 3000);
-        }
-    };
-
-    const addEdge = (edge) => {
-        const nameOccupied = edges.reduce((prev, next) => prev || next.name === edge.name, false);
+    const validateEdge = (edge, knownEdges, knownPoints) => {
+        const nameOccupied = knownEdges.reduce((prev, next) => prev || next.name === edge.name, false);
         if (!nameOccupied) {
-            const sourcePoint = points.find((knownPoint) => knownPoint.name === edge.sourceName);
+            const sourcePoint = knownPoints.find((knownPoint) => knownPoint.name === edge.sourceName);
             if (sourcePoint) {
-                const targetPoint = points.find((knownPoint) => knownPoint.name === edge.targetName);
+                const targetPoint = knownPoints.find((knownPoint) => knownPoint.name === edge.targetName);
                 if (targetPoint) {
-                    const lineObject = cachedBoard.create('line', [sourcePoint, targetPoint], edgeToLine(edge));
-                    addEdgeRaw(lineObject);
-                    return 0;
+                    return {
+                        line: edgeToLine(edge),
+                        sourcePoint: sourcePoint,
+                        targetPoint: targetPoint
+                    };
                 } else {
                     notify.show(`The name "${edge.name}" does not belong to any (target) node.`, 'error', 3000);
                 }
@@ -82,15 +66,49 @@ const useBoard = () => {
         } else {
             notify.show(`The name "${edge.name}" is already taken.`, 'error', 3000);
         }
+        return undefined;
+    };
+
+    const addPoint = (node) => {
+        const point = validateNode(node, points);
+        if (point) {
+            const pointObject = cachedBoard.create('point', [point.x, point.y], point);
+            addPointRaw(pointObject);
+            return 0;
+        }
         return 1;
+    };
+
+    const removePoint = (name) => {
+        const knownPoint = points.find((knownPoint) => knownPoint.name === name);
+
+        if (knownPoint) {
+            const hasConnectedEdges = edges.reduce((prev, next) => prev || next.point1.name === knownPoint.name || next.point2.name === knownPoint.name, false);
+            if (!hasConnectedEdges) {
+                removePointRaw(knownPoint);
+                cachedBoard.removeObject(knownPoint);
+            } else {
+                notify.show(`Cannot remove node "${name}": Edges depend on this node.`, 'error', 3000);
+            }
+        } else {
+            notify.show(`The node name "${name}" is unknown.`, 'error', 3000);
+        }
+    };
+
+    const addEdge = (edge) => {
+        const {line, sourcePoint, targetPoint} = validateEdge(edge, edges, points);
+        if (line) {
+            const lineObject = cachedBoard.create('line', [sourcePoint, targetPoint], edgeToLine(edge));
+            addEdgeRaw(lineObject);
+            return 0;
+        }
     };
 
     const removeEdge = (name) => {
         const knownEdge = edges.find((knownEdge) => knownEdge.name === name);
-
         if (knownEdge) {
             removeEdgeRaw(knownEdge);
-            cachedBoard.removeObject(knownEdge.object);
+            cachedBoard.removeObject(knownEdge);
         } else {
             notify.show(`The edge name "${name}" is unknown.`, 'error', 3000);
         }
@@ -103,49 +121,49 @@ const useBoard = () => {
     };
 
     const setGame = (parityGame) => {
-        // local "backup"
-        const prevPoints = points;
-        const prevEdges = edges;
-
-        // Clear previous board
-        prevEdges.forEach((edge) => removeEdge(edge.name));
-        prevPoints.forEach((point) => removePoint(point.name));
-
-        // Load new board
-        let uploadedPointNames = [];
-        for (const position of parityGame.positions) {
-            const newPosition = {
-                x: position.positionX,
-                y: position.positionY,
-                name: position.name
-            };
-            if (!addPoint(newPosition)) {
-                notify.show("Supplied broken parity game. Rolling back upload.");
-                uploadedPointNames.forEach(removePoint);
-                prevPoints.forEach(addPoint);
-                return 1;
+        // Validate new nodes
+        let newPoints = [];
+        for (const node of parityGame.positions) {
+            const point = validateNode(node, newPoints);
+            if (!point) {
+                notify.show(`Invalid node '${node.name}'. Rolling back upload.`, "error", 3000);
+                return;
             }
-            uploadedPointNames.push(position.name);
+            newPoints.push(point);
         }
 
-        let uploadedEdgeNames = [];
+        // Validate new edges
+        let newEdges = [];
         for (const edge of parityGame.edges) {
-            const newEdge = {
-                name: edge.name,
-                sourceName: edge.source.name,
-                targetName: edge.target.name
-            };
-            if (!addEdge(newEdge)) {
-                notify.show("Supplied broken parity game. Rolling back upload.");
-                uploadedEdgeNames.forEach(removeEdge);
-                uploadedPointNames.forEach(removePoint);
-                prevPoints.forEach(addPoint);
-                prevEdges.forEach(addEdge);
-                return 1;
+            const line = validateEdge(edge, newEdges, newPoints);
+            if (!line) {
+                notify.show(`Invalid edge '${edge.name}'. Rolling back upload.`, "error", 3000);
+                return;
             }
-            uploadedEdgeNames.push(edge.name);
+            newEdges.push(line);
         }
-        return 0;
+
+        // Create new board
+        cachedBoard.suspendUpdate();
+
+        // Clear previous contents
+        edges.forEach((edge) => cachedBoard.removeObject(edge));
+        points.forEach((point) => cachedBoard.removeObject(point));
+
+        // Queue new points for render
+        const renderedPoints = newPoints.map((point) => cachedBoard.create('point', [point.x, point.y], point));
+
+        // Attach point objects to lines
+        const newEdgesWithPoints = parityGame.edges.map((edge) => validateEdge(edge, [], renderedPoints));
+        // Queue new edges for render
+        const renderedEdges = newEdgesWithPoints
+            .map((edge) => cachedBoard.create('line', [edge.sourcePoint, edge.targetPoint], edge.line));
+
+        cachedBoard.unsuspendUpdate();
+
+        // Update local state
+        setPoints(renderedPoints);
+        setEdges(renderedEdges);
     };
 
     const getGame = () => ({
