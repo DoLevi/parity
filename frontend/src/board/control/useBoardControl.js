@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, removeEdge) => {
+const useBoardControl = (unsetPromptState, addPoint, addEdge) => {
     const [pointName, setPointName] = useState('');
     const [edgeName, setEdgeName] = useState('');
     const [edgeSourceName, setEdgeSourceName] = useState('');
@@ -9,10 +9,9 @@ const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, remov
 
     const generateInputObjects = (promptState) => {
         switch (promptState) {
-            case 'addPoint':  // fall-through
-            case 'removePoint':  // which this is subject to change
+            case 'addNode':
                 return [{
-                    id: 'pointName',
+                    id: 'nodeName',
                     placeholder: 'Enter node name',
                     value: pointName,
                     onChange: (event) => setPointName(event.target.value)
@@ -34,13 +33,6 @@ const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, remov
                     value: edgeTargetName,
                     onChange: (event) => setEdgeTargetName(event.target.value)
                 }];
-            case 'removeEdge':
-                return [{
-                    id: 'edgeName',
-                    placeholder: 'Enter edge name',
-                    value: edgeName,
-                    onChange: (event) => setEdgeName(event.target.value)
-                }];
             default:
                 return [];
         }
@@ -48,7 +40,7 @@ const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, remov
 
     const generateOnSubmit = (promptState) => {
         switch (promptState) {
-            case 'addPoint':
+            case 'addNode':
                 return (event) => {
                     event.preventDefault();
                     addPoint({
@@ -56,12 +48,6 @@ const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, remov
                         x: 50,
                         y: 50
                     });
-                    unsetPromptState();
-                };
-            case 'removePoint':
-                return (event) => {
-                    event.preventDefault();
-                    removePoint(pointName);
                     unsetPromptState();
                 };
             case 'addEdge':
@@ -72,12 +58,6 @@ const useBoardControl = (unsetPromptState, addPoint, removePoint, addEdge, remov
                         sourceName: edgeSourceName,
                         targetName: edgeTargetName
                     });
-                    unsetPromptState();
-                };
-            case 'removeEdge':
-                return (event) => {
-                    event.preventDefault();
-                    removeEdge(edgeName);
                     unsetPromptState();
                 };
             default:

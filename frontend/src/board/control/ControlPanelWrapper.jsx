@@ -2,9 +2,18 @@ import React from "react";
 
 import ControlPanelPure from "./ControlPanelPure";
 import useGameControl from "./useGameControl";
+import { useState } from "react";
+import useBoardControl from "./useBoardControl";
+import ParityModal from "../../utils/ParityModal";
+import ParityInputForm from "../../utils/ParityInputForm";
 
 
-const ControlPanelWrapper = ({setGame, points, lines}) => {
+const ControlPanelWrapper = ({setGame, points, lines, addNode, removeNode, addEdge, removeEdge}) => {
+    const [promptState, setPromptState] = useState(undefined);
+    const {
+        generateInputObjects,
+        generateOnSubmit
+    } = useBoardControl(() => setPromptState(undefined), addNode, removeNode, addEdge, removeEdge);
     const {
         downloadGame,
         uploadGame,
@@ -17,14 +26,27 @@ const ControlPanelWrapper = ({setGame, points, lines}) => {
     } = useGameControl(setGame, points, lines);
 
     return (
-        <ControlPanelPure gameControlOpen={gameControlOpen}
-                          toggleGameControlOpen={toggleGameControlOpen}
-                          downloadGame={downloadGame}
-                          uploadGame={uploadGame}
-                          nodeObjects={nodeObjects}
-                          toggleNodeObjectsOpen={toggleNodeObjects}
-                          edgeObjects={edgeObjects}
-                          toggleEdgeObjectsOpen={toggleEdgeObjects}/>
+        <>
+            <ControlPanelPure gameControlOpen={gameControlOpen}
+                              toggleGameControlOpen={toggleGameControlOpen}
+                              downloadGame={downloadGame}
+                              uploadGame={uploadGame}
+                              nodeObjects={nodeObjects}
+                              toggleNodeObjectsOpen={toggleNodeObjects}
+                              edgeObjects={edgeObjects}
+                              toggleEdgeObjectsOpen={toggleEdgeObjects}
+                              setPromptState={setPromptState}
+                              removeNode={removeNode}
+                              removeEdge={removeEdge}/>
+
+            <ParityModal isOpen={!!promptState} onRequestClose={() => setPromptState(undefined)}>
+                {
+                    promptState &&
+                    <ParityInputForm inputObjects={generateInputObjects(promptState)}
+                                     onSubmit={generateOnSubmit(promptState)}/>
+                }
+            </ParityModal>
+        </>
     );
 };
 

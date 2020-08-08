@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
+
 const ControlPanelRoot = styled.div`
     border-radius: 8px;
     padding: 2px;
@@ -17,12 +18,19 @@ const ControlHeader = styled.div`
     cursor: pointer;
 `;
 
-const ControlElement = styled.div`
+const PrimaryControlElement = styled.div`
     border-radius: 6px;
     margin: 1px;
     padding: 8px 12px 8px 18px;
     background-color: lightgrey;
     cursor: pointer;
+`;
+
+const SecondaryControlElement = styled(PrimaryControlElement)`
+    display: flex;
+    justify-content: space-between;
+
+    cursor: default;
 `;
 
 const ControlPanelPure = ({
@@ -33,7 +41,10 @@ const ControlPanelPure = ({
         nodeObjects,
         toggleNodeObjectsOpen,
         edgeObjects,
-        toggleEdgeObjectsOpen
+        toggleEdgeObjectsOpen,
+        setPromptState,
+        removeNode,
+        removeEdge
     }) => (
     <ControlPanelRoot>
         <ControlHeader onClick={() => toggleGameControlOpen()}>
@@ -43,13 +54,13 @@ const ControlPanelPure = ({
         {
             gameControlOpen &&
             <>
-                <ControlElement onClick={() => uploadGame()}>
+                <PrimaryControlElement onClick={() => uploadGame()}>
                     Load Game
-                </ControlElement>
+                </PrimaryControlElement>
 
-                <ControlElement onClick={() => downloadGame()}>
+                <PrimaryControlElement onClick={() => downloadGame()}>
                     Save Game
-                </ControlElement>
+                </PrimaryControlElement>
             </>
         }
 
@@ -58,10 +69,22 @@ const ControlPanelPure = ({
         </ControlHeader>
 
         {
+            !nodeObjects.on &&
+            <PrimaryControlElement onClick={() => setPromptState('addNode')}>
+                Add node
+            </PrimaryControlElement>
+        }
+        {
             nodeObjects.nodes.map((node) => (
-                <ControlElement>
-                    {node.name}
-                </ControlElement>
+                <SecondaryControlElement>
+                    <div>
+                        {node.name}
+                    </div>
+
+                    <div style={{cursor: "pointer"}} onClick={() => removeNode(node.name)}>
+                        X
+                    </div>
+                </SecondaryControlElement>
             ))
         }
 
@@ -70,10 +93,22 @@ const ControlPanelPure = ({
         </ControlHeader>
 
         {
+            !edgeObjects.on &&
+            <PrimaryControlElement onClick={() => setPromptState('addEdge')}>
+                Add edge
+            </PrimaryControlElement>
+        }
+        {
             edgeObjects.edges.map((edge) => (
-                <ControlElement>
-                    {edge.name}
-                </ControlElement>
+                <SecondaryControlElement>
+                    <div>
+                        {edge.name}
+                    </div>
+                    
+                    <div style={{cursor: "pointer"}} onClick={() => removeEdge(edge.name)}>
+                        X
+                    </div>
+                </SecondaryControlElement>
             ))
         }
     </ControlPanelRoot>
