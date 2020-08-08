@@ -15,7 +15,6 @@ const lineToEdge = (line) => ({
 });
 
 const useGameControl = (setGame, points, lines) => {
-    console.log(points);
     const [nodeObjects, setNodeObjects] = useState({on: true, nodes: points.map(pointToNode)});
     const [edgeObjects, setEdgeObjects] = useState({on: true, edges: lines.map(lineToEdge)});
     const [gameControlOpen, setGameControlOpen] = useState(true);

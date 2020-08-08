@@ -1,17 +1,27 @@
 import React from "react";
-import Flexbox from "flexbox-react";
 import styled from "styled-components";
 
+const ControlPanelRoot = styled.div`
+    border-radius: 8px;
+    padding: 2px;
+    background-color: lightgrey;
+    display: flex;
+    flex-direction: column;
+`;
 
 const ControlHeader = styled.div`
+    border-radius: 6px;
+    margin: 1px;
     padding: 8px 12px;
-    background-color: lightgrey;
+    background-color: whitesmoke;
     cursor: pointer;
 `;
 
 const ControlElement = styled.div`
+    border-radius: 6px;
+    margin: 1px;
     padding: 8px 12px 8px 18px;
-    background-color: whitesmoke;
+    background-color: lightgrey;
     cursor: pointer;
 `;
 
@@ -25,7 +35,7 @@ const ControlPanelPure = ({
         edgeObjects,
         toggleEdgeObjectsOpen
     }) => (
-    <Flexbox flexDirection="column">
+    <ControlPanelRoot>
         <ControlHeader onClick={() => toggleGameControlOpen()}>
             Game controls
         </ControlHeader>
@@ -66,7 +76,7 @@ const ControlPanelPure = ({
                 </ControlElement>
             ))
         }
-    </Flexbox>
+    </ControlPanelRoot>
 );
 
 export default ControlPanelPure;
