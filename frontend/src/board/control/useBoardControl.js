@@ -5,7 +5,7 @@ const useBoardControl = (unsetPromptState, addPoint, addEdge) => {
     const [pointName, setPointName] = useState('');
     const [initial, setInitial] = useState(false);
     const [player0, setPlayer0] = useState(false);
-    const [parity, setParity] = useState(undefined);
+    const [parity, setParity] = useState('');
 
     const [edgeName, setEdgeName] = useState('');
     const [edgeSourceName, setEdgeSourceName] = useState('');
@@ -24,13 +24,13 @@ const useBoardControl = (unsetPromptState, addPoint, addEdge) => {
                     id: 'nodeInitial',
                     type: 'checkbox',
                     placeholder: 'Initial',
-                    value: "initial",
+                    value: initial,
                     onChange: (event) => setInitial(event.target.checked)
                 }, {
                     id: 'nodePlayer0',
                     type: 'checkbox',
                     placeholder: 'Player 0',
-                    value: "player0",
+                    value: player0,
                     onChange: (event) => setPlayer0(event.target.checked)
                 }, {
                     id: 'nodeParity',

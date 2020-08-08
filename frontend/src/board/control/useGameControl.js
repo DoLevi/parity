@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 
 const pointToNode = (point) => ({
     name: point.name,
+    initial: point.initial,
+    player0: point.player0,
+    parity: point.parity,
     x: point.coords.usrCoords[1],
     y: point.coords.usrCoords[2]
 });
@@ -50,6 +53,7 @@ const useGameControl = (setGame, points, lines) => {
     };
 
     const uploadGame = () => {
+        console.log(points.map(pointToNode));
         let element = document.createElement('input');
         element.type = 'file';
         element.onchange = (event) => {

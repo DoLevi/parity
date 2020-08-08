@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { notify } from 'react-notify-toast';
+
 import useArray from '../utils/useArray';
+import {Colors, Faces} from '../style/NodeStyle';
 
 
-// TODO: add properties: initial, player0, parity
 const nodeToPoint = (node) => ({
     name: node.name,
+    face: node.player0 ? Faces.nodePlayer0Face : Faces.nodeNotPlayer0Face,
+    fillColor: node.initial ? Colors.nodeInitialColor : Colors.nodeNotInitialColor,
+    strokeColor: node.initial ? Colors.nodeInitialColor : Colors.nodeNotInitialColor,
     x: node.x,
     y: node.y
 });
@@ -62,6 +66,7 @@ const useBoard = () => {
         const point = validateNode(node, points);
         if (point) {
             const pointObject = cachedBoard.create('point', [point.x, point.y], point);
+            // TODO: enrich with meta data about initial, player0, parity
             addPointRaw(pointObject);
             return 0;
         }

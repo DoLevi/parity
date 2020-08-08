@@ -15,14 +15,13 @@ const ParityInputForm = ({inputObjects, onSubmit}) => (
                            onChange={input.onChange}
                            style={{margin: '8px'}}/>
                 ) : (
-                    <Flexbox alignItems="center">
+                    <Flexbox alignItems="center" key={input.id}>
                         <input type={input.type}
-                               key={input.id}
-                               value={input.value}
+                               checked={input.value}
                                onChange={input.onChange}
                                style={{margin: '8px'}}/>
 
-                        <label for={input.id}>{input.placeholder}</label>
+                        <label>{input.placeholder}</label>
                     </Flexbox>
                 ))
             }
