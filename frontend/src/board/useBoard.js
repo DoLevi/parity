@@ -67,7 +67,10 @@ const useBoard = () => {
         if (point) {
             const pointObject = cachedBoard.create('point', [point.x, point.y], point);
             // TODO: enrich with meta data about initial, player0, parity
-            addPointRaw(pointObject);
+            addPointRaw({
+                ...node,
+                object: pointObject
+            });
             return 0;
         }
         return 1;
@@ -80,7 +83,7 @@ const useBoard = () => {
             const hasConnectedEdges = edges.reduce((prev, next) => prev || next.point1.name === knownPoint.name || next.point2.name === knownPoint.name, false);
             if (!hasConnectedEdges) {
                 removePointRaw(knownPoint);
-                cachedBoard.removeObject(knownPoint);
+                cachedBoard.removeObject(knownPoint.object);
             } else {
                 notify.show(`Cannot remove node "${name}": Edges depend on this node.`, 'error', 3000);
             }
@@ -145,7 +148,10 @@ const useBoard = () => {
         points.forEach((point) => cachedBoard.removeObject(point));
 
         // Queue new points for render
-        const renderedPoints = newPoints.map((point) => cachedBoard.create('point', [point.x, point.y], point));
+        const renderedPoints = newPoints.map((point) => ({
+            ...point,
+            object: cachedBoard.create('point', [point.x, point.y], point)
+        }));
 
         // Attach point objects to lines
         const newEdgesWithPoints = parityGame.edges.map((edge) => validateEdge(edge, [], renderedPoints));

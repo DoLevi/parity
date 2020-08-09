@@ -6,8 +6,8 @@ const pointToNode = (point) => ({
     initial: point.initial,
     player0: point.player0,
     parity: point.parity,
-    x: point.coords.usrCoords[1],
-    y: point.coords.usrCoords[2]
+    x: point.object.coords.usrCoords[1],
+    y: point.object.coords.usrCoords[2]
 });
 
 const lineToEdge = (line) => ({
