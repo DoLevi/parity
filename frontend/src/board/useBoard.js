@@ -66,7 +66,6 @@ const useBoard = () => {
         const point = validateNode(node, points);
         if (point) {
             const pointObject = cachedBoard.create('point', [point.x, point.y], point);
-            // TODO: enrich with meta data about initial, player0, parity
             addPointRaw({
                 ...node,
                 object: pointObject
