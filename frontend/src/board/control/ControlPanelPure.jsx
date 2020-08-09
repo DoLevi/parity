@@ -76,7 +76,7 @@ const ControlPanelPure = ({
         }
         {
             nodeObjects.nodes.map((node) => (
-                <SecondaryControlElement>
+                <SecondaryControlElement key={node.name}>
                     <div>
                         {node.name}
                     </div>
